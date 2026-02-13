@@ -11,9 +11,6 @@
         },
         {
             "m_Id": "8cfc57a7ae714b46bacf4dfd5005ec16"
-        },
-        {
-            "m_Id": "fcce11a6ce5648e19ff90724e2658e0e"
         }
     ],
     "m_Keywords": [],
@@ -1783,9 +1780,6 @@
         },
         {
             "m_Id": "8cfc57a7ae714b46bacf4dfd5005ec16"
-        },
-        {
-            "m_Id": "fcce11a6ce5648e19ff90724e2658e0e"
         }
     ]
 }
@@ -2083,46 +2077,6 @@
         "m_SerializableColors": []
     },
     "m_SerializedDescriptor": "SurfaceDescription.Alpha"
-}
-
-{
-    "m_SGVersion": 1,
-    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
-    "m_ObjectId": "fcce11a6ce5648e19ff90724e2658e0e",
-    "m_Guid": {
-        "m_GuidSerialized": "7da9adb8-f977-414d-b3a1-9117f23f1dfc"
-    },
-    "m_Name": "_PulseRadius",
-    "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "_PulseRadius",
-    "m_DefaultReferenceName": "_PulseRadius",
-    "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": true,
-    "m_UseCustomSlotLabel": false,
-    "m_CustomSlotLabel": "",
-    "m_DismissedVersion": 0,
-    "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
-    "m_Hidden": false,
-    "m_PerRendererData": false,
-    "m_customAttributes": [],
-    "m_Value": 0.0,
-    "m_FloatType": 0,
-    "m_RangeValues": {
-        "x": 0.0,
-        "y": 1.0
-    },
-    "m_SliderType": 0,
-    "m_SliderPower": 3.0,
-    "m_EnumType": 0,
-    "m_CSharpEnumString": "",
-    "m_EnumNames": [
-        "Default"
-    ],
-    "m_EnumValues": [
-        0
-    ]
 }
 
 {
