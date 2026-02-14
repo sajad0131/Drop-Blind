@@ -9,6 +9,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float xClamp = 4.5f; // Limit how far left/right player can go
     [SerializeField] private float smoothness = 20f; // For smoothing the input
 
+    [Header("References")]
+    [SerializeField] private SonarManager sonarManager;
+
     private Vector2 _moveInput;
     private float _targetX;
 
@@ -65,4 +68,12 @@ public class PlayerController : MonoBehaviour
 
         transform.position = newPos;
     }
+
+    public void OnTap()
+    {
+
+        sonarManager.TriggerSonar(transform.position);
+    }
+
+
 }
