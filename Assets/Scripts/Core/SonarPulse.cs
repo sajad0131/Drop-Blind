@@ -45,6 +45,19 @@ public class SonarPulse : MonoBehaviour
         pulseRoutine = StartCoroutine(PulseRoutine());
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        // Check specifically for the Obstacle component to avoid GetComponent calls on walls/ground if not needed
+        if (other.CompareTag("Obstacle"))
+        {
+            Obstacle obs = other.GetComponent<Obstacle>();
+            if (obs != null)
+            {
+                obs.Reveal();
+            }
+        }
+    }
+
     private IEnumerator PulseRoutine()
     {
         // 1. Expand

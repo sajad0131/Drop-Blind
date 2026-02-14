@@ -97,7 +97,7 @@ Material:
     m_Floats:
     - Vector1_1D9A2AE: 0.01
     - Vector1_EFE64959: 30
-    - Vector1_FEFF47F1: 0.4
+    - Vector1_FEFF47F1: 1
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
@@ -110,6 +110,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _Dissolve: 0
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
@@ -132,7 +133,7 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_6DF76E71: {r: 0, g: 75.912964, b: 236.07079, a: 0}
+    - Color_6DF76E71: {r: 0, g: 230.12498, b: 715.6325, a: 0}
     - _BaseColor: {r: 1, g: 0, b: 0, a: 1}
     - _Color: {r: 1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 19.698313, g: 0, b: 0, a: 1}
