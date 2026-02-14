@@ -8,16 +8,13 @@ public class SonarPulse : MonoBehaviour
     [SerializeField] private float maxRange = 20f;
     [SerializeField] private float fadeDuration = 0.5f;
 
-
     [Header("Visuals")]
     [SerializeField] private MeshRenderer meshRenderer;
-    [SerializeField] private string alphaProperty = "_Alpha"; // Check your Shader Graph for the exact property name!
+    [SerializeField] private string alphaProperty = "_Alpha";
 
     private Material materialInstance;
     private float currentRadius;
     private Coroutine pulseRoutine;
-
-
     private System.Action<SonarPulse> returnToPoolAction;
 
     public void Initialize(System.Action<SonarPulse> returnAction)
@@ -27,11 +24,9 @@ public class SonarPulse : MonoBehaviour
 
     private void Awake()
     {
-        // Cache the material to modify properties efficiently
         if (meshRenderer != null)
         {
             materialInstance = meshRenderer.material;
-            
         }
     }
 
@@ -41,7 +36,7 @@ public class SonarPulse : MonoBehaviour
         transform.localScale = Vector3.zero;
         currentRadius = 0f;
 
-        // Reset Alpha/Opacity
+        // Reset Alpha
         if (materialInstance != null) materialInstance.SetFloat(alphaProperty, 1f);
 
         gameObject.SetActive(true);
@@ -56,11 +51,11 @@ public class SonarPulse : MonoBehaviour
         while (currentRadius < maxRange)
         {
             currentRadius += expansionSpeed * Time.deltaTime;
-            transform.localScale = Vector3.one * currentRadius * 2f; // Scale is diameter
+            transform.localScale = Vector3.one * currentRadius * 2f;
             yield return null;
         }
 
-        // 2. Optional: Fade out at max range before disappearing
+        // 2. Fade Out
         float elapsed = 0f;
         float startAlpha = materialInstance != null ? materialInstance.GetFloat(alphaProperty) : 1f;
 
@@ -75,7 +70,7 @@ public class SonarPulse : MonoBehaviour
             yield return null;
         }
 
-        // 3. Return to Pool
-        //gameObject.SetActive(false);
+        // 3. Return to Pool (CRITICAL FIX)
+        returnToPoolAction?.Invoke(this);
     }
 }

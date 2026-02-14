@@ -206,7 +206,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: -10}
+  m_LocalPosition: {x: 0, y: -3.02, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -446,6 +446,7 @@ GameObject:
   - component: {fileID: 1255711199}
   - component: {fileID: 1255711204}
   - component: {fileID: 1255711203}
+  - component: {fileID: 1255711205}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -557,7 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e49125351cf5a53458525874697ef993, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  sensitivity: 0.01
+  sensitivity: 0.02
   xClamp: 4.5
   smoothness: 20
   sonarManager: {fileID: 2048690646}
@@ -683,6 +684,33 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!54 &1255711205
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255711198}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1745307167
 GameObject:
   m_ObjectHideFlags: 0
@@ -749,7 +777,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 49cd2239524c8574ba6bf57c5c78eb5a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -788,13 +816,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1745307167}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.44869, y: -0.49, z: -1.7749}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0.51}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &1967685548
 GameObject:
   m_ObjectHideFlags: 0
@@ -839,7 +867,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b04632e4db9145745974902fbde94f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldScroller
-  fallSpeed: 10
+  fallSpeed: 5
 --- !u!1 &2048690645
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,6 +878,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2048690647}
   - component: {fileID: 2048690646}
+  - component: {fileID: 2048690648}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -887,6 +916,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2048690648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048690645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d7522528cf92a54c96d9cadfa532fb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObstacleManager
+  levelData: {fileID: 11400000, guid: f3b783d9f67692a4aa308075733c96b8, type: 2}
+  worldContainer: {fileID: 1967685549}
+  obstaclePrefab: {fileID: 3168633238901009253, guid: 36d2080622faf6648b13df67360dabd7, type: 3}
+  xSpawnRange: 3.5
+  destructionHeight: 15
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
