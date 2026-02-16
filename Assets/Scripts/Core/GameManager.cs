@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
     [Header("Game State")]
     public bool IsGameOver = false;
 
+    // Reference to the UI Controller
+    [SerializeField] private GameUI gameUI;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -31,9 +34,17 @@ public class GameManager : MonoBehaviour
         var player = FindFirstObjectByType<PlayerController>();
         if (player != null) player.enabled = false;
 
-        // 3. TODO: Show UI / Restart Button
-        // For now, simple reload after delay for testing
-        Invoke(nameof(RestartLevel), 2f);
+        // 3. Show UI
+        if (gameUI != null)
+        {
+            gameUI.ShowGameOver();
+        }
+        else
+        {
+            // Fallback if UI isn't linked
+            Debug.LogError("GameUI reference missing in GameManager!");
+            Invoke(nameof(RestartLevel), 2f);
+        }
     }
 
     private void RestartLevel()

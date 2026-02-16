@@ -96,6 +96,7 @@ public class Obstacle : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("GAME OVER! Hit Obstacle.");
+            GameManager.Instance.TriggerGameOver();
             // TODO: Trigger Game Over Event
         }
     }
