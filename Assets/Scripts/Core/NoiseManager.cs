@@ -49,16 +49,19 @@ public class NoiseManager : MonoBehaviour
     /// <param name="amount">Raw amount to add (e.g., 20 for a tap)</param>
     public void AddNoise(float amount)
     {
+
+        if (currentNoise >= maxNoise) return;
+
         currentNoise += amount;
         currentNoise = Mathf.Clamp(currentNoise, 0, maxNoise);
 
         OnNoiseLevelChanged?.Invoke(currentNoise / maxNoise);
 
-        // Optional: Trigger "Too Loud" state if maxed out
         if (currentNoise >= maxNoise)
         {
-            // TODO: Trigger Monster Attack immediately
-            Debug.LogWarning("MAX NOISE REACHED! Monster Attracted!");
+            // We let ChaserController handle the actual Kill logic 
+            // when it physically reaches the player, or trigger it here directly.
+            Debug.LogWarning("MAX NOISE REACHED!");
         }
     }
 }
