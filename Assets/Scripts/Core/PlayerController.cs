@@ -12,6 +12,11 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     [SerializeField] private SonarManager sonarManager;
 
+
+    [Header("Noise Settings")]
+    [SerializeField] private float noisePerTap = 25f;
+
+
     private Vector2 _moveInput;
     private float _targetX;
 
@@ -73,6 +78,11 @@ public class PlayerController : MonoBehaviour
     {
 
         sonarManager.TriggerSonar(transform.position);
+
+        if (NoiseManager.Instance != null)
+        {
+            NoiseManager.Instance.AddNoise(noisePerTap);
+        }
     }
 
 
