@@ -35,7 +35,7 @@ public class GameUI : MonoBehaviour
         if (ScoreManager.Instance != null && !GameManager.Instance.IsGameOver)
         {
             // Format: "125m"
-            depthText.text = $"{Mathf.FloorToInt(ScoreManager.Instance.CurrentDepth)}m";
+            depthText.text = $"{Mathf.FloorToInt(ScoreManager.Instance.CurrentDepth)}";
         }
     }
 

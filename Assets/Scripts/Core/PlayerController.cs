@@ -81,7 +81,8 @@ public class PlayerController : MonoBehaviour
 
         if (NoiseManager.Instance != null)
         {
-            NoiseManager.Instance.AddNoise(noisePerTap);
+            float scaling = DifficultyManager.Instance != null ? DifficultyManager.Instance.CurrentNoiseMultiplier : 1f;
+            NoiseManager.Instance.AddNoise(noisePerTap * scaling);
         }
     }
 

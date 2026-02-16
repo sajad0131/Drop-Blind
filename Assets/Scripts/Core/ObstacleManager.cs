@@ -33,7 +33,7 @@ public class ObstacleManager : MonoBehaviour
         // Apply Level Data Speed
         if (levelData != null && WorldScroller.Instance != null)
         {
-            WorldScroller.Instance.SetSpeed(levelData.globalSpeed);
+            WorldScroller.Instance.SetSpeed(levelData.baseGlobalSpeed);
         }
     }
 
@@ -41,7 +41,7 @@ public class ObstacleManager : MonoBehaviour
     {
         spawnTimer += Time.deltaTime;
 
-        if (spawnTimer >= levelData.spawnInterval)
+        if (spawnTimer >= levelData.baseSpawnInterval)
         {
             SpawnObstacle();
             spawnTimer = 0f;

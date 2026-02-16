@@ -2775,7 +2775,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2037006907
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2850,6 +2850,7 @@ GameObject:
   - component: {fileID: 2048690651}
   - component: {fileID: 2048690653}
   - component: {fileID: 2048690652}
+  - component: {fileID: 2048690654}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -2980,6 +2981,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
   scoreMultiplier: 1
+--- !u!114 &2048690654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048690645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d04d96b5d1ed6a40bdae3795a11f627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DifficultyManager
+  levelData: {fileID: 11400000, guid: f3b783d9f67692a4aa308075733c96b8, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

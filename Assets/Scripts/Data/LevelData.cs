@@ -3,14 +3,17 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewLevelData", menuName = "DropBlind/Level Data")]
 public class LevelData : ScriptableObject
 {
-    [Header("Spawning")]
-    [Tooltip("Time in seconds between obstacle spawns")]
-    public float spawnInterval = 1.5f;
+    [Header("Difficulty Curves")]
+    [Tooltip("X-axis is time/distance, Y-axis is the speed multiplier")]
+    public AnimationCurve speedOverTime = AnimationCurve.Linear(0, 1, 300, 3); // Scales from 1x to 3x over 5 mins
 
-    [Tooltip("How far below the player obstacles spawn (Y-axis)")]
+    [Tooltip("X-axis is time/distance, Y-axis is the noise multiplier")]
+    public AnimationCurve noiseScalingOverTime = AnimationCurve.Linear(0, 1, 300, 2);
+
+    [Header("Spawning")]
+    public float baseSpawnInterval = 1.5f;
     public float spawnDistanceY = 20f;
 
-    [Header("Difficulty")]
-    [Tooltip("Speed multiplier for the WorldScroller")]
-    public float globalSpeed = 10f;
+    [Header("Base Settings")]
+    public float baseGlobalSpeed = 10f;
 }
