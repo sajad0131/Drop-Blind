@@ -95,5 +95,11 @@ public class PlayerController : MonoBehaviour
         {
             NoiseManager.Instance.AddNoise(noisePerTap);
         }
+
+        // 3. AUDIO INTEGRATION
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySonarPing();
+        }
     }
 }

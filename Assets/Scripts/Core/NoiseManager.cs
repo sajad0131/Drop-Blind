@@ -14,6 +14,10 @@ public class NoiseManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private float currentNoise = 0f;
 
+
+    [Header("Settings")]
+    [SerializeField] private float noiseThreshold = 80f; // Point where monster hears you
+
     // Event for UI and Monster to listen to (Optimization: Better than checking every frame)
     public UnityEvent<float> OnNoiseLevelChanged;
 
@@ -62,6 +66,15 @@ public class NoiseManager : MonoBehaviour
             // We let ChaserController handle the actual Kill logic 
             // when it physically reaches the player, or trigger it here directly.
             Debug.LogWarning("MAX NOISE REACHED!");
+        }
+
+        if (currentNoise >= noiseThreshold)
+        {
+            // The AudioManager handles the cooldown, so we can safely call this every frame
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayWarning();
+            }
         }
     }
 }

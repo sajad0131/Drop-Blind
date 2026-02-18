@@ -2356,7 +2356,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BackgroundScroller
   _renderer: {fileID: 1745307169}
   _scrollSpeed: 5
-  _parallaxFactor: 0.1
+  _parallaxFactor: 0.05
   _texturePropertyName: _BaseMap
 --- !u!1 &1824853798
 GameObject:
@@ -2868,6 +2868,7 @@ GameObject:
   - component: {fileID: 2048690653}
   - component: {fileID: 2048690652}
   - component: {fileID: 2048690654}
+  - component: {fileID: 2048690655}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -2937,6 +2938,7 @@ MonoBehaviour:
   decayRate: 15
   maxNoise: 100
   currentNoise: 0
+  noiseThreshold: 80
   OnNoiseLevelChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3011,6 +3013,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyManager
   levelData: {fileID: 11400000, guid: f3b783d9f67692a4aa308075733c96b8, type: 2}
+--- !u!114 &2048690655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048690645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1fa75c2439859241819393c6dfda447, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  audioData: {fileID: 11400000, guid: de41684a7bff6dc47a9ed4e8b4d2fa08, type: 2}
+  sfxPoolSize: 10
+  warningCooldown: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
