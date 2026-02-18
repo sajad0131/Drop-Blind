@@ -5,18 +5,24 @@ public class ObstacleManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private LevelData levelData;
-    [SerializeField] private Transform worldContainer; // The WorldScroller object
-    [SerializeField] private Obstacle obstaclePrefab; // Your Obstacle Prefab
+    [SerializeField] private Transform worldContainer;
+    [SerializeField] private Obstacle obstaclePrefab;
 
     [Header("Settings")]
-    [SerializeField] private float xSpawnRange = 4.5f; // Should match PlayerController xClamp
-    [SerializeField] private float destructionHeight = 15f; // Y pos above player to despawn
+    // REPLACED: Fixed xSpawnRange with dynamic calculation
+    [Tooltip("Keep obstacles this far from the exact screen edge.")]
+    [SerializeField] private float spawnEdgePadding = 0.5f;
+    [SerializeField] private float destructionHeight = 15f;
 
     private ObjectPool<Obstacle> pool;
     private float spawnTimer;
+    private Camera _mainCamera;
+    private float _dynamicSpawnRange;
 
     private void Awake()
     {
+        _mainCamera = Camera.main;
+
         // Initialize Pool
         pool = new ObjectPool<Obstacle>(
             createFunc: CreateObstacle,
@@ -26,11 +32,12 @@ public class ObstacleManager : MonoBehaviour
             defaultCapacity: 10,
             maxSize: 30
         );
+
+        RecalculateSpawnBounds();
     }
 
     private void Start()
     {
-        // Apply Level Data Speed
         if (levelData != null && WorldScroller.Instance != null)
         {
             WorldScroller.Instance.SetSpeed(levelData.baseGlobalSpeed);
@@ -39,6 +46,8 @@ public class ObstacleManager : MonoBehaviour
 
     private void Update()
     {
+        // Optional: Call RecalculateSpawnBounds() here if you expect runtime resolution changes (WebGL resizing)
+
         spawnTimer += Time.deltaTime;
 
         if (spawnTimer >= levelData.baseSpawnInterval)
@@ -46,6 +55,16 @@ public class ObstacleManager : MonoBehaviour
             SpawnObstacle();
             spawnTimer = 0f;
         }
+    }
+
+    private void RecalculateSpawnBounds()
+    {
+        // Assuming gameplay happens at Z=0 (Standard for 2D/Vertical Runners)
+        // If your obstacles are at a different Z depth, change '0f' to that value.
+        float distanceToCamera = Mathf.Abs(_mainCamera.transform.position.z - 0f);
+
+        Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(1, 0.5f, distanceToCamera));
+        _dynamicSpawnRange = rightEdge.x - spawnEdgePadding;
     }
 
     private Obstacle CreateObstacle()
@@ -58,28 +77,15 @@ public class ObstacleManager : MonoBehaviour
     {
         Obstacle obj = pool.Get();
 
-        // 1. Calculate Spawn Position
-        // We spawn relative to the World Container so they move WITH the world.
-        // However, we want them to appear at a fixed distance below the PLAYER (who is at World 0,0 usually)
-        // Since World moves UP, we must spawn at (PlayerY - Distance) in World Space, 
-        // then convert to Container Local Space if needed, OR just spawn in World Space and reparent.
+        // UPDATED: Use dynamic range
+        float randomX = Random.Range(-_dynamicSpawnRange, _dynamicSpawnRange);
 
-        // Simpler approach for "Falling" game:
-        // Spawn at a fixed Y relative to the Camera/Player. 
-        // If Player is at Y=0, spawn at Y = -20.
-
-        float randomX = Random.Range(-xSpawnRange, xSpawnRange);
+        // Note: We use 0f for Z here. If your game uses depth, match the player's Z.
         Vector3 spawnPos = new Vector3(randomX, -levelData.spawnDistanceY, 0f);
 
-        // If obstacles are children of WorldContainer (which moves), setting localPosition puts them relative to the moving world.
-        // This is exactly what we want.
-        obj.transform.localPosition = new Vector3(randomX, -levelData.spawnDistanceY - worldContainer.transform.position.y, 0f);
-
-        // Wait! If we use localPosition relative to a moving parent, the math gets tricky.
-        // EASIER WAY: Set World Position, then ensure it's parented.
+        // Set position directly in world space logic (as per your previous file logic)
         obj.transform.position = new Vector3(randomX, -levelData.spawnDistanceY, 0f);
 
-        // Initialize with cleanup logic
         obj.Initialize(ReturnToPool, destructionHeight);
     }
 

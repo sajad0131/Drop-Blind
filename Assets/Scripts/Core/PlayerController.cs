@@ -6,20 +6,23 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float sensitivity = 0.01f;
-    [SerializeField] private float xClamp = 4.5f; // Limit how far left/right player can go
     [SerializeField] private float smoothness = 20f; // For smoothing the input
+
+    // REPLACED: Fixed xClamp with dynamic calculation
+    [Header("Screen Bounds")]
+    [Tooltip("Distance from edge of screen to keep player inside.")]
+    [SerializeField] private float horizontalPadding = 0.5f;
+    private float _dynamicXClamp;
 
     [Header("References")]
     [SerializeField] private SonarManager sonarManager;
 
-
     [Header("Noise Settings")]
     [SerializeField] private float noisePerTap = 25f;
 
-
     private Vector2 _moveInput;
     private float _targetX;
-
+    private Camera _mainCamera;
 
     // specific reference to your uploaded Input Action Asset
     private InputAction _moveAction;
@@ -28,46 +31,56 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _playerInput = GetComponent<PlayerInput>();
+        _mainCamera = Camera.main;
 
         // Setup initial target to current position
         _targetX = transform.position.x;
+
+        // Calculate bounds immediately
+        RecalculateBounds();
     }
 
     private void OnEnable()
     {
-        // We look for the "Look" action because your Input file binds <Pointer>/delta to it.
-        // Usually "Move" is for Joysticks (Value), "Look" is for Delta.
         _moveAction = _playerInput.actions["Look"];
     }
 
     private void Update()
     {
+        // Optional: If testing on WebGL where window resizes, uncomment this:
+        // RecalculateBounds(); 
+
         HandleMovement();
+    }
+
+    private void RecalculateBounds()
+    {
+        // 1. Get distance from camera to player
+        float distanceToCamera = Mathf.Abs(_mainCamera.transform.position.z - transform.position.z);
+
+        // 2. Find the world position of the right edge of the screen (Viewport 1.0)
+        // Viewport Coordinates: (0,0) is bottom-left, (1,1) is top-right
+        Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(1, 0.5f, distanceToCamera));
+
+        // 3. Set clamp based on that edge minus padding
+        _dynamicXClamp = rightEdge.x - horizontalPadding;
     }
 
     private void HandleMovement()
     {
-        // 1. Read the Delta (How much the finger/mouse moved this frame)
-        // We only care about X axis for this game
         float deltaX = 0f;
 
-        // Check if we are touching/clicking
-        // Note: For a "Drop" game, usually ANY touch counts as control
         if (Mouse.current.leftButton.isPressed || (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed))
         {
             Vector2 delta = _moveAction.ReadValue<Vector2>();
             deltaX = delta.x;
         }
 
-        // 2. Apply sensitivity and calculate target
-        // We assume 60FPS reference for sensitivity, hence Time.deltaTime isn't strictly multiplied 
-        // by delta here if using the new Input System's raw delta, but for consistency:
         _targetX += deltaX * sensitivity;
 
-        // 3. Clamp the position so player doesn't fly off screen
-        _targetX = Mathf.Clamp(_targetX, -xClamp, xClamp);
+        // UPDATED: Use the dynamic clamp
+        _targetX = Mathf.Clamp(_targetX, -_dynamicXClamp, _dynamicXClamp);
 
-        // 4. Smoothly move the visual player to the target X
         Vector3 newPos = transform.position;
         newPos.x = Mathf.Lerp(newPos.x, _targetX, Time.deltaTime * smoothness);
 
@@ -76,15 +89,11 @@ public class PlayerController : MonoBehaviour
 
     public void OnTap()
     {
-
         sonarManager.TriggerSonar(transform.position);
 
         if (NoiseManager.Instance != null)
         {
-            float scaling = DifficultyManager.Instance != null ? DifficultyManager.Instance.CurrentNoiseMultiplier : 1f;
-            NoiseManager.Instance.AddNoise(noisePerTap * scaling);
+            NoiseManager.Instance.AddNoise(noisePerTap);
         }
     }
-
-
 }
