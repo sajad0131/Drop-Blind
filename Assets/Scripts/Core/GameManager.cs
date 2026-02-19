@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     [Header("Game State")]
     public bool IsGameOver = false;
 
-    private GameUI gameUI;
+    [SerializeField]private GameUI gameUI;
 
     private void Awake()
     {
@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        gameUI = FindObjectOfType<GameUI>();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 

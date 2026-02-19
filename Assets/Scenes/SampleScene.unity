@@ -1214,6 +1214,7 @@ GameObject:
   - component: {fileID: 780450868}
   - component: {fileID: 780450867}
   - component: {fileID: 780450866}
+  - component: {fileID: 780450870}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1306,6 +1307,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &780450870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780450865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e83785c56f52f34a8e57d6f0567e1f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameUI
+  depthText: {fileID: 1644835095}
+  noiseBarPanel: {fileID: 47265762}
+  gameOverPanel: {fileID: 2037006906}
+  finalScoreText: {fileID: 1927282734}
+  highScoreText: {fileID: 294498850}
+  restartButton: {fileID: 1873174588}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2919,7 +2938,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleManager
   levelData: {fileID: 11400000, guid: f3b783d9f67692a4aa308075733c96b8, type: 2}
-  worldContainer: {fileID: 1967685549}
   obstaclePrefab: {fileID: 3168633238901009253, guid: 36d2080622faf6648b13df67360dabd7, type: 3}
   spawnEdgePadding: 0.5
   destructionHeight: 15
@@ -2937,8 +2955,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NoiseManager
   decayRate: 15
   maxNoise: 100
-  currentNoise: 0
   noiseThreshold: 80
+  currentNoise: 0
   OnNoiseLevelChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2968,7 +2986,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   IsGameOver: 0
-  gameUI: {fileID: 2048690652}
+  gameUI: {fileID: 780450870}
 --- !u!114 &2048690652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2976,7 +2994,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2048690645}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e83785c56f52f34a8e57d6f0567e1f2, type: 3}
   m_Name: 
