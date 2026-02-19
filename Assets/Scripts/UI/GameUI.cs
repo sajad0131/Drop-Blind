@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Standard for Unity 6.x
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class GameUI : MonoBehaviour
 {
     [Header("HUD References")]
     [SerializeField] private TextMeshProUGUI depthText;
-    [SerializeField] private GameObject noiseBarPanel; // The parent of your existing NoiseUI
+    [SerializeField] private GameObject noiseBarPanel;
 
     [Header("Game Over References")]
     [SerializeField] private GameObject gameOverPanel;
@@ -15,14 +15,23 @@ public class GameUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI highScoreText;
     [SerializeField] private Button restartButton;
 
+    private void Awake()
+    {
+        // THIS IS THE FIX: The new UI registers itself directly to the manager
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterUI(this);
+        }
+    }
+
     private void Start()
     {
         // Ensure correct initial state
-        gameOverPanel.SetActive(false);
-        noiseBarPanel.SetActive(true);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (noiseBarPanel != null) noiseBarPanel.SetActive(true);
 
         // Hook up button
-        restartButton.onClick.AddListener(OnRestartClicked);
+        if (restartButton != null) restartButton.onClick.AddListener(OnRestartClicked);
 
         // Start Score Tracking
         if (ScoreManager.Instance != null)
@@ -32,37 +41,30 @@ public class GameUI : MonoBehaviour
     private void Update()
     {
         // Update HUD
-        if (ScoreManager.Instance != null && !GameManager.Instance.IsGameOver)
+        if (ScoreManager.Instance != null && GameManager.Instance != null && !GameManager.Instance.IsGameOver)
         {
-            // Format: "125m"
-            depthText.text = $"{Mathf.FloorToInt(ScoreManager.Instance.CurrentDepth)}";
+            if (depthText != null) depthText.text = $"{Mathf.FloorToInt(ScoreManager.Instance.CurrentDepth)}";
         }
     }
 
-    /// <summary>
-    /// Called by GameManager when player dies
-    /// </summary>
     public void ShowGameOver()
     {
-        // 1. Hide HUD elements if desired
-        noiseBarPanel.SetActive(false);
-        depthText.gameObject.SetActive(false);
+        // Added safety null checks to completely prevent missing reference errors
+        if (noiseBarPanel != null) noiseBarPanel.SetActive(false);
+        if (depthText != null) depthText.gameObject.SetActive(false);
 
-        // 2. Finalize Score
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.StopTracking();
-            finalScoreText.text = $"Depth: {Mathf.FloorToInt(ScoreManager.Instance.CurrentDepth)}m";
-            highScoreText.text = $"Best: {Mathf.FloorToInt(ScoreManager.Instance.HighScore)}m";
+            if (finalScoreText != null) finalScoreText.text = $"Depth: {Mathf.FloorToInt(ScoreManager.Instance.CurrentDepth)}m";
+            if (highScoreText != null) highScoreText.text = $"Best: {Mathf.FloorToInt(ScoreManager.Instance.HighScore)}m";
         }
 
-        // 3. Show Panel with simple animation
-        gameOverPanel.SetActive(true);
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
     }
 
     private void OnRestartClicked()
     {
-        // Reload current scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

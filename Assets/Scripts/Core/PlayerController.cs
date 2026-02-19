@@ -89,14 +89,16 @@ public class PlayerController : MonoBehaviour
 
     public void OnTap()
     {
-        sonarManager.TriggerSonar(transform.position);
+        if (SonarManager.Instance != null)
+        {
+            SonarManager.Instance.TriggerSonar(transform.position);
+        }
 
         if (NoiseManager.Instance != null)
         {
             NoiseManager.Instance.AddNoise(noisePerTap);
         }
 
-        // 3. AUDIO INTEGRATION
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlaySonarPing();

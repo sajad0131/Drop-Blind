@@ -7,19 +7,26 @@ public class NoiseUI : MonoBehaviour
 
     private void Start()
     {
-        // Subscribe to the event
         if (NoiseManager.Instance != null)
         {
             NoiseManager.Instance.OnNoiseLevelChanged.AddListener(UpdateVisuals);
         }
     }
 
+    // THIS IS THE CRITICAL FIX FOR YOUR UI ERROR
+    private void OnDestroy()
+    {
+        if (NoiseManager.Instance != null)
+        {
+            NoiseManager.Instance.OnNoiseLevelChanged.RemoveListener(UpdateVisuals);
+        }
+    }
+
     private void UpdateVisuals(float normalizedNoise)
     {
-        // Lerp for smooth UI effect (optional optimization)
-        noiseSlider.value = normalizedNoise;
+        if (noiseSlider == null) return;
 
-        // Visual feedback: Turn Red when high
+        noiseSlider.value = normalizedNoise;
         Color barColor = Color.Lerp(Color.cyan, Color.red, normalizedNoise);
         noiseSlider.fillRect.GetComponent<Image>().color = barColor;
     }

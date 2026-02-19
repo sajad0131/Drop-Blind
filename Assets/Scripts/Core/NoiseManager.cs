@@ -1,59 +1,62 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement; // NEEDED FOR RELOADS
 
 public class NoiseManager : MonoBehaviour
 {
     public static NoiseManager Instance { get; private set; }
 
     [Header("Noise Settings")]
-    [Tooltip("How fast noise reduces per second when idle.")]
     [SerializeField] private float decayRate = 15f;
-    [Tooltip("Maximum noise level.")]
     [SerializeField] private float maxNoise = 100f;
+    [SerializeField] private float noiseThreshold = 80f;
 
     [Header("Debug")]
     [SerializeField] private float currentNoise = 0f;
 
-
-    [Header("Settings")]
-    [SerializeField] private float noiseThreshold = 80f; // Point where monster hears you
-
-    // Event for UI and Monster to listen to (Optimization: Better than checking every frame)
     public UnityEvent<float> OnNoiseLevelChanged;
 
     private void Awake()
     {
-        // Singleton Pattern
-        if (Instance == null)
-        {
-            Instance = this;
-        }
+        if (Instance == null) Instance = this;
         else
         {
             Destroy(gameObject);
+            return;
         }
+
+        // Listen for when the player hits "Retry"
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // THIS FIXES YOUR BUG: 
+        // Wipes all connections to the old destroyed Sliders
+        OnNoiseLevelChanged.RemoveAllListeners();
+
+        // Reset the noise for the new round
+        currentNoise = 0f;
     }
 
     private void Update()
     {
         if (currentNoise > 0)
         {
-            // Decay noise over time
             currentNoise -= decayRate * Time.deltaTime;
             currentNoise = Mathf.Clamp(currentNoise, 0, maxNoise);
 
-            // Notify listeners
-            OnNoiseLevelChanged?.Invoke(currentNoise / maxNoise); // Return normalized 0-1 value
+            OnNoiseLevelChanged?.Invoke(currentNoise / maxNoise);
         }
     }
 
-    /// <summary>
-    /// Call this from PlayerController or Obstacles
-    /// </summary>
-    /// <param name="amount">Raw amount to add (e.g., 20 for a tap)</param>
     public void AddNoise(float amount)
     {
-
         if (currentNoise >= maxNoise) return;
 
         currentNoise += amount;
@@ -61,20 +64,9 @@ public class NoiseManager : MonoBehaviour
 
         OnNoiseLevelChanged?.Invoke(currentNoise / maxNoise);
 
-        if (currentNoise >= maxNoise)
-        {
-            // We let ChaserController handle the actual Kill logic 
-            // when it physically reaches the player, or trigger it here directly.
-            Debug.LogWarning("MAX NOISE REACHED!");
-        }
-
         if (currentNoise >= noiseThreshold)
         {
-            // The AudioManager handles the cooldown, so we can safely call this every frame
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.PlayWarning();
-            }
+            if (AudioManager.Instance != null) AudioManager.Instance.PlayWarning();
         }
     }
 }

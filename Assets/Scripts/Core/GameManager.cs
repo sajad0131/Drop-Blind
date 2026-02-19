@@ -8,13 +8,35 @@ public class GameManager : MonoBehaviour
     [Header("Game State")]
     public bool IsGameOver = false;
 
-    // Reference to the UI Controller
-    [SerializeField] private GameUI gameUI;
+    private GameUI gameUI;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        IsGameOver = false;
+        // Notice we removed the search here! The UI will register itself.
+    }
+
+    // NEW METHOD: The UI will call this to link itself safely
+    public void RegisterUI(GameUI ui)
+    {
+        gameUI = ui;
     }
 
     public void TriggerGameOver()
@@ -24,25 +46,20 @@ public class GameManager : MonoBehaviour
         IsGameOver = true;
         Debug.Log("GAME OVER");
 
-        // 1. Stop the World Scrolling
         if (WorldScroller.Instance != null)
         {
             WorldScroller.Instance.SetSpeed(0);
         }
 
-        // 2. Disable Player Controls
         var player = FindFirstObjectByType<PlayerController>();
         if (player != null) player.enabled = false;
 
-        // 3. Show UI
         if (gameUI != null)
         {
             gameUI.ShowGameOver();
         }
         else
         {
-            // Fallback if UI isn't linked
-            Debug.LogError("GameUI reference missing in GameManager!");
             Invoke(nameof(RestartLevel), 2f);
         }
     }

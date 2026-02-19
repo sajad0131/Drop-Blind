@@ -7,16 +7,20 @@ public class SonarManager : MonoBehaviour
     [SerializeField] private SonarPulse sonarPrefab;
     [SerializeField] private int defaultPoolSize = 10;
     [SerializeField] private int maxPoolSize = 20;
-
+    public static SonarManager Instance { get; private set; }
     private ObjectPool<SonarPulse> pool;
 
     private void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         pool = new ObjectPool<SonarPulse>(
             createFunc: CreatePulse,
             actionOnGet: (p) => p.gameObject.SetActive(true),
             actionOnRelease: (p) => p.gameObject.SetActive(false),
-            defaultCapacity: defaultPoolSize
+            defaultCapacity: defaultPoolSize,
+            maxSize: maxPoolSize // Good practice to actually set this in the pool
         );
     }
 
