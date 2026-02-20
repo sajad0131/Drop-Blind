@@ -3,14 +3,23 @@ using UnityEngine.UI;
 
 public class NoiseUI : MonoBehaviour
 {
-    [SerializeField] private Slider noiseSlider;
+    public Slider noiseSlider;
 
     private void Start()
     {
+        if (noiseSlider == null)
+        {
+            noiseSlider = GameObject.FindGameObjectWithTag("NoiseSlider").GetComponent<Slider>();
+        }
         if (NoiseManager.Instance != null)
         {
             NoiseManager.Instance.OnNoiseLevelChanged.AddListener(UpdateVisuals);
         }
+    }
+
+    private void Awake()
+    {
+        noiseSlider = GameObject.FindGameObjectWithTag("NoiseSlider").GetComponent<Slider>();
     }
 
     // THIS IS THE CRITICAL FIX FOR YOUR UI ERROR
@@ -24,7 +33,10 @@ public class NoiseUI : MonoBehaviour
 
     private void UpdateVisuals(float normalizedNoise)
     {
-        if (noiseSlider == null) return;
+        if (noiseSlider == null)
+        {
+            noiseSlider = GameObject.FindGameObjectWithTag("NoiseSlider").GetComponent<Slider>();
+        }
 
         noiseSlider.value = normalizedNoise;
         Color barColor = Color.Lerp(Color.cyan, Color.red, normalizedNoise);

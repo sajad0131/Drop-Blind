@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 47265764}
   m_Layer: 5
   m_Name: NoiseSlider
-  m_TagString: Untagged
+  m_TagString: NoiseSlider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2885,7 +2885,6 @@ GameObject:
   - component: {fileID: 2048690649}
   - component: {fileID: 2048690651}
   - component: {fileID: 2048690653}
-  - component: {fileID: 2048690652}
   - component: {fileID: 2048690654}
   - component: {fileID: 2048690655}
   m_Layer: 0
@@ -2987,24 +2986,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   IsGameOver: 0
   gameUI: {fileID: 780450870}
---- !u!114 &2048690652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2048690645}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e83785c56f52f34a8e57d6f0567e1f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameUI
-  depthText: {fileID: 1644835095}
-  noiseBarPanel: {fileID: 47265762}
-  gameOverPanel: {fileID: 2037006906}
-  finalScoreText: {fileID: 1927282734}
-  highScoreText: {fileID: 294498850}
-  restartButton: {fileID: 1873174588}
 --- !u!114 &2048690653
 MonoBehaviour:
   m_ObjectHideFlags: 0
