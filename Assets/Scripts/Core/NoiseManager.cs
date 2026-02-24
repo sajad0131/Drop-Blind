@@ -15,6 +15,7 @@ public class NoiseManager : MonoBehaviour
     [SerializeField] private float currentNoise = 0f;
 
     public UnityEvent<float> OnNoiseLevelChanged;
+    public float CurrentNoiseNormalized => maxNoise <= 0f ? 0f : currentNoise / maxNoise;
 
     private void Awake()
     {
@@ -25,23 +26,34 @@ public class NoiseManager : MonoBehaviour
             return;
         }
 
+        if (OnNoiseLevelChanged == null)
+        {
+            OnNoiseLevelChanged = new UnityEvent<float>();
+        }
+
         // Listen for when the player hits "Retry"
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDestroy()
     {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // THIS FIXES YOUR BUG: 
-        // Wipes all connections to the old destroyed Sliders
-        OnNoiseLevelChanged.RemoveAllListeners();
+        ResetNoise();
+    }
 
-        // Reset the noise for the new round
+    public void ResetNoise()
+    {
         currentNoise = 0f;
+        OnNoiseLevelChanged?.Invoke(CurrentNoiseNormalized);
     }
 
     private void Update()
@@ -51,7 +63,7 @@ public class NoiseManager : MonoBehaviour
             currentNoise -= decayRate * Time.deltaTime;
             currentNoise = Mathf.Clamp(currentNoise, 0, maxNoise);
 
-            OnNoiseLevelChanged?.Invoke(currentNoise / maxNoise);
+            OnNoiseLevelChanged?.Invoke(CurrentNoiseNormalized);
         }
     }
 
@@ -62,7 +74,7 @@ public class NoiseManager : MonoBehaviour
         currentNoise += amount;
         currentNoise = Mathf.Clamp(currentNoise, 0, maxNoise);
 
-        OnNoiseLevelChanged?.Invoke(currentNoise / maxNoise);
+        OnNoiseLevelChanged?.Invoke(CurrentNoiseNormalized);
 
         if (currentNoise >= noiseThreshold)
         {

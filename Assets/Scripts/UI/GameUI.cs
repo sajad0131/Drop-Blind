@@ -38,6 +38,14 @@ public class GameUI : MonoBehaviour
             ScoreManager.Instance.StartTracking();
     }
 
+    private void OnDestroy()
+    {
+        if (restartButton != null)
+        {
+            restartButton.onClick.RemoveListener(OnRestartClicked);
+        }
+    }
+
     private void Update()
     {
         // Update HUD

@@ -16,10 +16,22 @@ public class ScoreManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         // Load saved high score (works on WebGL/Mobile)
         HighScore = PlayerPrefs.GetFloat("HighScore", 0);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     public void StartTracking()
@@ -43,7 +55,9 @@ public class ScoreManager : MonoBehaviour
 
     private void Update()
     {
-        if (!_isTracking || GameManager.Instance.IsGameOver) return;
+        if (!_isTracking) return;
+
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
 
         // Calculate distance based on WorldScroller speed
         // Since WorldScroller moves the world UP, we are technically falling that distance.

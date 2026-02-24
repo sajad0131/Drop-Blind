@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Pool;
-using UnityEngine.SceneManagement;
 
 public class ObstacleManager : MonoBehaviour
 {
@@ -21,17 +20,6 @@ public class ObstacleManager : MonoBehaviour
     private float _dynamicSpawnRange;
 
     private void Awake()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        InitializeSystem();
-    }
-
-    private void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         InitializeSystem();
     }
@@ -54,9 +42,23 @@ public class ObstacleManager : MonoBehaviour
 
         pool = new ObjectPool<Obstacle>(
             createFunc: CreateObstacle,
-            actionOnGet: (obj) => obj.gameObject.SetActive(true),
-            actionOnRelease: (obj) => obj.gameObject.SetActive(false),
-            actionOnDestroy: (obj) => Destroy(obj.gameObject),
+            actionOnGet: (obj) =>
+            {
+                obj.PrepareForReuse();
+                obj.gameObject.SetActive(true);
+            },
+            actionOnRelease: (obj) =>
+            {
+                obj.PrepareForPoolRelease();
+                obj.gameObject.SetActive(false);
+            },
+            actionOnDestroy: (obj) =>
+            {
+                if (obj != null)
+                {
+                    Destroy(obj.gameObject);
+                }
+            },
             collectionCheck: false,
             defaultCapacity: 10,
             maxSize: 30
