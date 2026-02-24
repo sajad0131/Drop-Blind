@@ -13,7 +13,11 @@ public class SonarManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         pool = new ObjectPool<SonarPulse>(
             createFunc: CreatePulse,
@@ -22,6 +26,14 @@ public class SonarManager : MonoBehaviour
             defaultCapacity: defaultPoolSize,
             maxSize: maxPoolSize // Good practice to actually set this in the pool
         );
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     private SonarPulse CreatePulse()

@@ -54,8 +54,16 @@ public class ObstacleManager : MonoBehaviour
 
         pool = new ObjectPool<Obstacle>(
             createFunc: CreateObstacle,
-            actionOnGet: (obj) => obj.gameObject.SetActive(true),
-            actionOnRelease: (obj) => obj.gameObject.SetActive(false),
+            actionOnGet: (obj) =>
+            {
+                obj.PrepareForReuse();
+                obj.gameObject.SetActive(true);
+            },
+            actionOnRelease: (obj) =>
+            {
+                obj.PrepareForPoolRelease();
+                obj.gameObject.SetActive(false);
+            },
             actionOnDestroy: (obj) => Destroy(obj.gameObject),
             collectionCheck: false,
             defaultCapacity: 10,

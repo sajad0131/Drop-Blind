@@ -25,6 +25,11 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
