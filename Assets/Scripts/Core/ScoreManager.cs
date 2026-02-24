@@ -55,7 +55,9 @@ public class ScoreManager : MonoBehaviour
 
     private void Update()
     {
-        if (!_isTracking || GameManager.Instance.IsGameOver) return;
+        if (!_isTracking) return;
+
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
 
         // Calculate distance based on WorldScroller speed
         // Since WorldScroller moves the world UP, we are technically falling that distance.

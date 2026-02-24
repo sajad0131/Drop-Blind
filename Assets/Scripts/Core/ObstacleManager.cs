@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Pool;
-using UnityEngine.SceneManagement;
 
 public class ObstacleManager : MonoBehaviour
 {
@@ -21,17 +20,6 @@ public class ObstacleManager : MonoBehaviour
     private float _dynamicSpawnRange;
 
     private void Awake()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        InitializeSystem();
-    }
-
-    private void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         InitializeSystem();
     }
