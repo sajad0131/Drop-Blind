@@ -21,7 +21,7 @@ public class ObstacleManager : MonoBehaviour
 
     private void Awake()
     {
-        InitializeSystem();
+        EnsureInitialized();
     }
 
     private void EnsureInitialized()

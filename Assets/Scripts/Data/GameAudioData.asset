@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccef3ad6362ab194982d4b66b7820739, type: 3}
   m_Name: GameAudioData
   m_EditorClassIdentifier: Assembly-CSharp::GameAudioData
-  sonarPing: {fileID: 0}
+  sonarPing: {fileID: 8300000, guid: 5f718466a47477540853ec73d78e9178, type: 3}
   pingPitchVariance: 0.8
-  footstep: {fileID: 0}
-  deathImpact: {fileID: 0}
-  backgroundAmbience: {fileID: 0}
+  footstep: {fileID: 8300000, guid: 7d182a292809e3e4793fe69088c51c05, type: 3}
+  deathImpact: {fileID: 8300000, guid: 95d0212df90c63e4fb7b4a6871ec65c3, type: 3}
+  backgroundAmbience: {fileID: 8300000, guid: 595636e1c7b1b4c48a3c7db0c737ad2d, type: 3}
   musicVolume: 0.5
   chaserGrowl: {fileID: 0}
-  highNoiseWarning: {fileID: 0}
+  highNoiseWarning: {fileID: 8300000, guid: 7d182a292809e3e4793fe69088c51c05, type: 3}
   obstacleHit: {fileID: 0}
