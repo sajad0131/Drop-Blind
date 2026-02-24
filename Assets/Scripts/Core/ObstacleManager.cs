@@ -8,7 +8,7 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private LevelData levelData;
     [SerializeField] private Obstacle obstaclePrefab;
 
-    // We will find this dynamically now to prevent missing references
+    // Found dynamically to stay valid across restart flows.
     private Transform worldContainer;
 
     [Header("Settings")]
@@ -22,41 +22,55 @@ public class ObstacleManager : MonoBehaviour
 
     private void Awake()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        InitializeSystem();
+        EnsureInitialized();
     }
 
-    private void OnDestroy()
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        InitializeSystem();
+        // Reset runtime state after restart/reload.
+        spawnTimer = 0f;
+        RefreshSceneReferences();
+        RecalculateSpawnBounds();
     }
 
-    private void InitializeSystem()
+    private void EnsureInitialized()
     {
-        _mainCamera = Camera.main;
+        if (pool != null) return;
+
+        RefreshSceneReferences();
         spawnTimer = 0f;
-
-        // Safely find the new WorldScroller to attach obstacles to
-        var scroller = FindFirstObjectByType<WorldScroller>();
-        if (scroller != null)
-        {
-            worldContainer = scroller.transform;
-            scroller.SetSpeed(levelData.baseGlobalSpeed); // Restart the scrolling speed!
-        }
-
-        // Rebuild the Object Pool completely so it doesn't try to use destroyed objects
-        if (pool != null) pool.Clear();
 
         pool = new ObjectPool<Obstacle>(
             createFunc: CreateObstacle,
-            actionOnGet: (obj) => obj.gameObject.SetActive(true),
-            actionOnRelease: (obj) => obj.gameObject.SetActive(false),
-            actionOnDestroy: (obj) => Destroy(obj.gameObject),
+            actionOnGet: (obj) =>
+            {
+                if (obj == null) return;
+                obj.PrepareForReuse();
+                obj.gameObject.SetActive(true);
+            },
+            actionOnRelease: (obj) =>
+            {
+                if (obj == null) return;
+                obj.PrepareForPoolRelease();
+                obj.gameObject.SetActive(false);
+            },
+            actionOnDestroy: (obj) =>
+            {
+                if (obj != null)
+                {
+                    Destroy(obj.gameObject);
+                }
+            },
             collectionCheck: false,
             defaultCapacity: 10,
             maxSize: 30
@@ -65,8 +79,30 @@ public class ObstacleManager : MonoBehaviour
         RecalculateSpawnBounds();
     }
 
+    private void RefreshSceneReferences()
+    {
+        _mainCamera = Camera.main;
+
+        var scroller = FindFirstObjectByType<WorldScroller>();
+        if (scroller != null)
+        {
+            worldContainer = scroller.transform;
+            if (levelData != null)
+            {
+                scroller.SetSpeed(levelData.baseGlobalSpeed);
+            }
+        }
+    }
+
     private void Update()
     {
+        if (pool == null)
+        {
+            EnsureInitialized();
+            if (pool == null) return;
+        }
+
+        if (levelData == null || obstaclePrefab == null) return;
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
 
         spawnTimer += Time.deltaTime;
@@ -80,24 +116,34 @@ public class ObstacleManager : MonoBehaviour
 
     private void RecalculateSpawnBounds()
     {
+        if (_mainCamera == null)
+        {
+            _dynamicSpawnRange = 4f;
+            return;
+        }
+
         float distanceToCamera = Mathf.Abs(_mainCamera.transform.position.z - 0f);
         Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(1, 0.5f, distanceToCamera));
-        _dynamicSpawnRange = rightEdge.x - spawnEdgePadding;
+        _dynamicSpawnRange = Mathf.Max(0.5f, rightEdge.x - spawnEdgePadding);
     }
 
     private Obstacle CreateObstacle()
     {
-        Obstacle obj = Instantiate(obstaclePrefab, worldContainer);
-        return obj;
+        return Instantiate(obstaclePrefab, worldContainer);
     }
 
     private void SpawnObstacle()
     {
+        if (worldContainer == null)
+        {
+            RefreshSceneReferences();
+        }
+
         Obstacle obj = pool.Get();
+        if (obj == null) return;
 
         float randomX = Random.Range(-_dynamicSpawnRange, _dynamicSpawnRange);
 
-        // Ensure it spawns as a child of the moving world
         if (worldContainer != null)
         {
             obj.transform.SetParent(worldContainer);
@@ -109,6 +155,7 @@ public class ObstacleManager : MonoBehaviour
 
     private void ReturnToPool(Obstacle obj)
     {
+        if (pool == null || obj == null) return;
         pool.Release(obj);
     }
 }

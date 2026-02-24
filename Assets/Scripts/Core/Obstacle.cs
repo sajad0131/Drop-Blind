@@ -26,6 +26,28 @@ public class Obstacle : MonoBehaviour
         destructionY = topYThreshold;
     }
 
+    public void PrepareForReuse()
+    {
+        if (_revealCoroutine != null)
+        {
+            StopCoroutine(_revealCoroutine);
+            _revealCoroutine = null;
+        }
+
+        SetDissolveValue(1f);
+    }
+
+    public void PrepareForPoolRelease()
+    {
+        if (_revealCoroutine != null)
+        {
+            StopCoroutine(_revealCoroutine);
+            _revealCoroutine = null;
+        }
+
+        SetDissolveValue(1f);
+    }
+
     private void Update()
     {
         // Check if we have moved past the player and gone off-screen (Top)
@@ -80,6 +102,7 @@ public class Obstacle : MonoBehaviour
             yield return null;
         }
         SetDissolveValue(1f); // Ensure it's fully invisible
+        _revealCoroutine = null;
     }
 
     private void SetDissolveValue(float value)
