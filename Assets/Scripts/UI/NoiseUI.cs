@@ -3,23 +3,22 @@ using UnityEngine.UI;
 
 public class NoiseUI : MonoBehaviour
 {
-    public Slider noiseSlider;
-
-    private void Start()
-    {
-        if (noiseSlider == null)
-        {
-            noiseSlider = GameObject.FindGameObjectWithTag("NoiseSlider").GetComponent<Slider>();
-        }
-        if (NoiseManager.Instance != null)
-        {
-            NoiseManager.Instance.OnNoiseLevelChanged.AddListener(UpdateVisuals);
-        }
-    }
+    [SerializeField] private Slider noiseSlider;
 
     private void Awake()
     {
-        noiseSlider = GameObject.FindGameObjectWithTag("NoiseSlider").GetComponent<Slider>();
+        EnsureSliderReference();
+    }
+
+    private void Start()
+    {
+        EnsureSliderReference();
+
+        if (NoiseManager.Instance != null)
+        {
+            NoiseManager.Instance.OnNoiseLevelChanged.AddListener(UpdateVisuals);
+            UpdateVisuals(NoiseManager.Instance.CurrentNoiseNormalized);
+        }
     }
 
     // THIS IS THE CRITICAL FIX FOR YOUR UI ERROR
@@ -33,13 +32,30 @@ public class NoiseUI : MonoBehaviour
 
     private void UpdateVisuals(float normalizedNoise)
     {
-        if (noiseSlider == null)
-        {
-            noiseSlider = GameObject.FindGameObjectWithTag("NoiseSlider").GetComponent<Slider>();
-        }
+        EnsureSliderReference();
+        if (noiseSlider == null) return;
 
         noiseSlider.value = normalizedNoise;
-        Color barColor = Color.Lerp(Color.cyan, Color.red, normalizedNoise);
-        noiseSlider.fillRect.GetComponent<Image>().color = barColor;
+
+        if (noiseSlider.fillRect != null)
+        {
+            var fillImage = noiseSlider.fillRect.GetComponent<Image>();
+            if (fillImage != null)
+            {
+                Color barColor = Color.Lerp(Color.cyan, Color.red, normalizedNoise);
+                fillImage.color = barColor;
+            }
+        }
+    }
+
+    private void EnsureSliderReference()
+    {
+        if (noiseSlider != null) return;
+
+        var sliderObj = GameObject.FindGameObjectWithTag("NoiseSlider");
+        if (sliderObj != null)
+        {
+            noiseSlider = sliderObj.GetComponent<Slider>();
+        }
     }
 }

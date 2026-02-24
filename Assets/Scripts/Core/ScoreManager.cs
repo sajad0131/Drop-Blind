@@ -16,10 +16,22 @@ public class ScoreManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         // Load saved high score (works on WebGL/Mobile)
         HighScore = PlayerPrefs.GetFloat("HighScore", 0);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     public void StartTracking()
