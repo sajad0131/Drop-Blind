@@ -52,13 +52,7 @@ public class ObstacleManager : MonoBehaviour
                 obj.PrepareForPoolRelease();
                 obj.gameObject.SetActive(false);
             },
-            actionOnDestroy: (obj) =>
-            {
-                if (obj != null)
-                {
-                    Destroy(obj.gameObject);
-                }
-            },
+            actionOnDestroy: (obj) => Destroy(obj.gameObject),
             collectionCheck: false,
             defaultCapacity: 10,
             maxSize: 30
