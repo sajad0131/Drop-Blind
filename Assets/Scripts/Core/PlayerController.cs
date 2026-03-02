@@ -28,11 +28,26 @@ public class PlayerController : MonoBehaviour
     private InputAction _moveAction;
     private PlayerInput _playerInput;
 
+    [Header("Animation Settings")]
+    [Tooltip("How fast the animation blends from falling to leaning left/right.")]
+    [SerializeField] private float animationSmoothSpeed = 10f;
+
+    // Component References
+    private Animator _animator;
+
+    // State Variables
+    private float _currentHorizontalInput = 0f;
+    private float _currentAnimBlend = 0f;
+
+    // Animator Hash for optimization (string lookups are slow, hashes are fast!)
+    private readonly int _horizontalSpeedHash = Animator.StringToHash("HorizontalSpeed");
+
+
     private void Awake()
     {
         _playerInput = GetComponent<PlayerInput>();
         _mainCamera = Camera.main;
-
+        _animator = GetComponentInChildren<Animator>();
         // Setup initial target to current position
         _targetX = transform.position.x;
 
@@ -51,6 +66,7 @@ public class PlayerController : MonoBehaviour
         // RecalculateBounds(); 
 
         HandleMovement();
+        HandleAnimation();
     }
 
     private void RecalculateBounds()
@@ -103,5 +119,15 @@ public class PlayerController : MonoBehaviour
         {
             AudioManager.Instance.PlaySonarPing();
         }
+    }
+
+    private void HandleAnimation()
+    {
+        // Smoothly interpolate the blend value toward the raw input
+        // If input is 1 (Right), it smoothly scales up. If 0 (No input), it settles back to falling.
+        _currentAnimBlend = Mathf.Lerp(_currentAnimBlend, _targetX, Time.deltaTime * animationSmoothSpeed);
+
+        // Feed the smoothed value into our 1D Blend Tree
+        _animator.SetFloat(_horizontalSpeedHash, _currentAnimBlend);
     }
 }
