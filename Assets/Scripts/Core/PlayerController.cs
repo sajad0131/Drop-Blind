@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Animation Settings")]
     [Tooltip("How fast the animation blends from falling to leaning left/right.")]
-    [SerializeField] private float animationSmoothSpeed = 10f;
+    [SerializeField] private float animationThreshold = 0.05f;
 
     // Component References
     private Animator _animator;
@@ -38,9 +38,15 @@ public class PlayerController : MonoBehaviour
     // State Variables
     private float _currentHorizontalInput = 0f;
     private float _currentAnimBlend = 0f;
+    private bool isDragging;
 
-    // Animator Hash for optimization (string lookups are slow, hashes are fast!)
+    // FIX: Track the actual swipe distance per frame
+    private float _currentDeltaX = 0f;
+
+    // MOBILE OPTIMIZATION: Animator Hashes for faster lookups (strings create garbage on mobile)
     private readonly int _horizontalSpeedHash = Animator.StringToHash("HorizontalSpeed");
+    private readonly int _movingLeftHash = Animator.StringToHash("MovingLeft");
+    private readonly int _movingRightHash = Animator.StringToHash("MovingRight");
 
 
     private void Awake()
@@ -84,15 +90,20 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        float deltaX = 0f;
+        _currentDeltaX = 0f; // Reset delta every frame
 
         if (Mouse.current.leftButton.isPressed || (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed))
         {
             Vector2 delta = _moveAction.ReadValue<Vector2>();
-            deltaX = delta.x;
+            _currentDeltaX = delta.x; // Store the actual input delta for the animator
+            isDragging = true;
+        }
+        else
+        {
+            isDragging = false;
         }
 
-        _targetX += deltaX * sensitivity;
+        _targetX += _currentDeltaX * sensitivity;
 
         // UPDATED: Use the dynamic clamp
         _targetX = Mathf.Clamp(_targetX, -_dynamicXClamp, _dynamicXClamp);
@@ -105,6 +116,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnTap()
     {
+        isDragging = false;
         if (SonarManager.Instance != null)
         {
             SonarManager.Instance.TriggerSonar(transform.position);
@@ -123,11 +135,24 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAnimation()
     {
-        // Smoothly interpolate the blend value toward the raw input
-        // If input is 1 (Right), it smoothly scales up. If 0 (No input), it settles back to falling.
-        _currentAnimBlend = Mathf.Lerp(_currentAnimBlend, _targetX, Time.deltaTime * animationSmoothSpeed);
-
-        // Feed the smoothed value into our 1D Blend Tree
-        _animator.SetFloat(_horizontalSpeedHash, _currentAnimBlend);
+        // FIX: Now we evaluate _currentDeltaX (finger movement) instead of _targetX (world position)
+        if (isDragging && _currentDeltaX < -animationThreshold)
+        {
+            // Moving Left
+            _animator.SetBool(_movingLeftHash, true);
+            _animator.SetBool(_movingRightHash, false);
+        }
+        else if (isDragging && _currentDeltaX > animationThreshold)
+        {
+            // Moving Right
+            _animator.SetBool(_movingRightHash, true);
+            _animator.SetBool(_movingLeftHash, false);
+        }
+        else
+        {
+            // Stopped moving horizontally OR lifted finger -> return to "falling" (idle) state
+            _animator.SetBool(_movingLeftHash, false);
+            _animator.SetBool(_movingRightHash, false);
+        }
     }
 }
